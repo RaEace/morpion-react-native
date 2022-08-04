@@ -6,66 +6,49 @@ const App = () => {
   const [player, setPlayer] = React.useState(1);
   const [grid, setGrid] = React.useState(["1","2","3","4","5","6","7","8","9"]);
   const [turnPlayed, setTurnplayed] = React.useState([]);
-  const WinPatterns = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,9],[2,4,6]];
   const [winner, setWinner] = React.useState(false); 
+
+  const WinPatterns = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,9],[2,4,6]];
+  const checkIfWinner = WinPatterns.map(box =>  grid[box[0]] === grid[box[1]] === grid[box[2]]).includes(true)
 
   const displayTitle = (box) => grid[box] === 1 ? "X" : grid[box] === 2 ? "0" : "-";
 
-  React.useEffect(() => {
-    setWinner(WinPatterns.map(winCondition => {
-      return grid[winCondition[0]] === grid[winCondition[1]] === grid[winCondition[2]]
-    }).includes(true));
-  },[grid])
-
   const handleTurn = (box) => {
     if(!turnPlayed.includes(box)) {
+      console.warn("turn")
       let gridCopy = grid;
       let turnPlayedCopy = turnPlayed; 
+      let isWinner = checkIfWinner; 
+
       gridcopy = grid.splice(box-1, 1, player); 
       turnPlayed.push(box);
+
+      setWinner(isWinner);
       setGrid(gridCopy);
       setTurnplayed(turnPlayedCopy);
       setPlayer(player === 1 ? 2 : 1);
     } 
   }
 
+  const initRow = (case1,case2,case3) => {
+    return (
+      <View style={styles.row}>
+        {[case1,case2,case3].map(box => {
+          return (
+            <TouchableOpacity key={box} style={styles.box} onPress={e => handleTurn(box+1)}>
+              <Text>{displayTitle(box)}</Text>
+            </TouchableOpacity>
+          )})}
+    </View>);
+  } 
+
   return (
     <ScrollView style={{marginTop: 70}}>
       <Text style={styles.title}>Premier essai du morpion!</Text>
       <View style={styles.container}>
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.box} onPress={e => handleTurn(1)}>
-            <Text>{displayTitle(0)}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={e => handleTurn(2)}>
-            <Text>{displayTitle(1)}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={e => handleTurn(3)}>
-            <Text>{displayTitle(2)}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.box} onPress={e => handleTurn(4)}>
-            <Text>{displayTitle(3)}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={e => handleTurn(5)}>
-            <Text>{displayTitle(4)}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={e => handleTurn(6)}>
-            <Text>{displayTitle(5)}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.box} onPress={e => handleTurn(7)}>
-            <Text>{displayTitle(6)}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={e => handleTurn(8)}>
-            <Text>{displayTitle(7)}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={e => handleTurn(9)}>
-            <Text>{displayTitle(8)}</Text>
-          </TouchableOpacity>
-        </View>
+        {initRow(0,1,2)}
+        {initRow(3,4,5)}
+        {initRow(6,7,8)}
         <Text style={styles.title}>Fini? ={'>'} {!winner ? "false" : "true"}</Text>
       </View>
     </ScrollView>
