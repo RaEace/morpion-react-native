@@ -1,29 +1,47 @@
 import React from 'react';
-import reactDom from 'react-dom';
-import { View, Text, ScrollView, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { checkIfWinner } from './src/util';
+
 
 const App = () => {
+  const emptyGrid = ["-","-","-","-","-","-","-","-","-"];
   const [player, setPlayer] = React.useState(1);
-  const [grid, setGrid] = React.useState(["1","2","3","4","5","6","7","8","9"]);
+  const [grid, setGrid] = React.useState(emptyGrid);
   const [turnPlayed, setTurnplayed] = React.useState([]);
   const [winner, setWinner] = React.useState(false); 
-
-  const WinPatterns = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,9],[2,4,6]];
-  const checkIfWinner = WinPatterns.map(box =>  grid[box[0]] === grid[box[1]] === grid[box[2]]).includes(true)
-
+  
   const displayTitle = (box) => grid[box] === 1 ? "X" : grid[box] === 2 ? "0" : "-";
+
+  const resetGame = () => {
+    setGrid(emptyGrid);
+    setWinner(false);
+    setTurnplayed([]);
+  }
+
+  React.useEffect(() => {
+    const gridSum = grid.reduce((a,b) => a+b);
+    if(gridSum == 13 || gridSum == 14) {
+      alert("pas de vainqueur");
+      resetGame();
+    }
+    else if(winner) {
+      alert("le joueur " + player + " a gagné!");
+      resetGame();
+    }
+    else {
+      setWinner(checkIfWinner(grid));
+    }
+  },[player, winner])
+
 
   const handleTurn = (box) => {
     if(!turnPlayed.includes(box)) {
-      console.warn("turn")
       let gridCopy = grid;
       let turnPlayedCopy = turnPlayed; 
-      let isWinner = checkIfWinner; 
 
-      gridcopy = grid.splice(box-1, 1, player); 
       turnPlayed.push(box);
+      gridCopy.splice(box-1, 1, player)
 
-      setWinner(isWinner);
       setGrid(gridCopy);
       setTurnplayed(turnPlayedCopy);
       setPlayer(player === 1 ? 2 : 1);
@@ -33,13 +51,15 @@ const App = () => {
   const initRow = (case1,case2,case3) => {
     return (
       <View style={styles.row}>
-        {[case1,case2,case3].map(box => {
-          return (
-            <TouchableOpacity key={box} style={styles.box} onPress={e => handleTurn(box+1)}>
-              <Text>{displayTitle(box)}</Text>
-            </TouchableOpacity>
-          )})}
-    </View>);
+      {[case1,case2,case3].map(box => {
+        return (
+          <TouchableOpacity key={box} style={styles.box} onPress={e => handleTurn(box+1)}>
+            <Text>{displayTitle(box)}</Text>
+          </TouchableOpacity>
+        )
+      })}
+    </View>
+    );
   } 
 
   return (
@@ -49,7 +69,6 @@ const App = () => {
         {initRow(0,1,2)}
         {initRow(3,4,5)}
         {initRow(6,7,8)}
-        <Text style={styles.title}>Fini? ={'>'} {!winner ? "false" : "true"}</Text>
       </View>
     </ScrollView>
   );

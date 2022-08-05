@@ -5,7 +5,9 @@
     },
     "extends": [
         "plugin:react/recommended",
-        "google"
+        "google",
+        "prettier",
+        "prettier/react"
     ],
     "parserOptions": {
         "ecmaFeatures": {
