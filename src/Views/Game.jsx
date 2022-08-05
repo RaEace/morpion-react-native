@@ -10,7 +10,7 @@ import {
 import { checkIfWinner } from "./src/util";
 import DisplayIcon from "./src/components/DisplayIcon";
 
-const App = () => {
+const Game = () => {
   const emptyGrid = ["-", "-", "-", "-", "-", "-", "-", "-", "-"];
   const [playTurn, setplayTurn] = React.useState(1);
   const [grid, setGrid] = React.useState(emptyGrid);
@@ -113,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Game;
