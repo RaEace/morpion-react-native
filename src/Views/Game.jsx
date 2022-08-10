@@ -1,14 +1,12 @@
 import React from "react";
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   Image,
 } from "react-native";
-import { checkIfWinner } from "./src/util";
-import DisplayIcon from "./src/components/DisplayIcon";
+import { checkIfWinner } from "../util";
 
 const Game = () => {
   const emptyGrid = ["-", "-", "-", "-", "-", "-", "-", "-", "-"];
@@ -50,6 +48,18 @@ const Game = () => {
     }
   };
 
+  const displayIcon = (box) => {
+    return grid[box] === 1 ? (
+      <View>
+        <Image style={styles.cross} source={require("../../assets/cross2.png")} />
+      </View>
+    ) : grid[box] === 2 ? (
+      <View>
+        <Image style={styles.circle} source={require("../../assets/circle2.png")} />
+      </View>
+    ) : null;
+  };
+
   const initRow = (case1, case2, case3) => {
     return (
       <View style={styles.row}>
@@ -60,7 +70,7 @@ const Game = () => {
               style={styles.box}
               onPress={(e) => handleTurn(box + 1)}
             >
-              <DisplayIcon box={grid[box]} />
+              {displayIcon(box)}
             </TouchableOpacity>
           );
         })}
